@@ -450,29 +450,31 @@ class TriangleMesh : public Geometry {
         
                     Vector e1 = B - A;
                     Vector e2 = C - A;
-                    Vector N = cross(e1, e2); 
                     
-                    double denominator = dot(ray.direction, N);
-                    if (fabs(denominator) < 1e-6) continue; 
-                    
-                    
-                    
-                    double beta = dot(e2, cross(A - ray.origin, ray.direction)) / denominator;
-                    double gamma = - dot(e1, cross(A - ray.origin, ray.direction)) / denominator;
-                    double alpha = 1.0 - beta - gamma;
-                    
-                    if (beta < 0 || gamma < 0 || alpha < 0) continue;
+                    Vector O_A = ray.origin - A;
+                    Vector e2_u = cross(ray.direction, e2);
 
-            
-                    double t_temp =  dot(A - ray.origin, N) / denominator;
-                    if (t_temp < 1e-4 || t_temp > t_min) continue;
+                    double denominator = dot(e1, e2_u);
 
-                    t_min = t_temp;
-                    P = ray.origin + t_temp * ray.direction;
-                    N = cross(e1, e2);
-                    N.normalize();
-                    hit = true;
-                    
+                    double beta = dot(O_A, e2_u) /denominator;
+                    if (beta < 0 || beta > 1) continue;
+
+                    Vector temp = cross(ray.direction, O_A);
+                    double gamma = dot(e1, temp) / denominator;
+
+                    if (gamma < 0 ||beta + gamma > 1) continue;
+
+                    Vector temp2 = cross(e2, O_A);
+
+                    double t_temp = dot(e1, temp2) / denominator;
+
+                    if (t_temp > 1e-4 && t_temp < t_min) {
+                        t_min = t_temp;
+                        P = ray.origin + t_temp * ray.direction;
+                        N = cross(e1, e2);
+                        N.normalize();
+                        hit = true;
+                    }
                 }
         
                 if (hit) {
