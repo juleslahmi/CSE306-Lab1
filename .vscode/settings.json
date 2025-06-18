@@ -54,6 +54,8 @@
         "iomanip": "cpp",
         "span": "cpp",
         "sstream": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "text_encoding": "cpp",
+        "complex": "cpp"
     }
 }
